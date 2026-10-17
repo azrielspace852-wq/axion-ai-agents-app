@@ -1,3 +1,0 @@
-# Pinned for reproducible CI runs. `playwright install chromium` fetches the
-# browser build matching this version.
-playwright>=1.45,<2.0
