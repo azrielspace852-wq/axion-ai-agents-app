@@ -1,0 +1,73 @@
+name: AXN TLD Experiment
+
+on:
+  workflow_dispatch:
+
+jobs:
+  dns:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download binaries
+        run: |
+          curl -sSL -o coredns.tgz https://github.com/coredns/coredns/releases/download/v1.11.3/coredns_1.11.3_linux_amd64.tgz
+          tar -xzf coredns.tgz && chmod +x coredns
+
+          curl -sSL -o cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+          chmod +x cloudflared
+
+      - name: Build DoH proxy
+        run: |
+          cd doh
+          go mod init doh
+          go get github.com/miekg/dns
+          go build -o ../doh-server .
+
+      - name: Start CoreDNS
+        run: |
+          ./coredns -conf Corefile > coredns.log 2>&1 &
+          sleep 2
+          cat coredns.log
+
+      - name: Start DoH proxy
+        run: |
+          ./doh-server > doh.log 2>&1 &
+          sleep 1
+          cat doh.log
+
+      - name: Start cloudflared tunnel
+        id: tunnel
+        run: |
+          ./cloudflared tunnel --url http://127.0.0.1:8053 --no-autoupdate > cloudflared.log 2>&1 &
+          for i in $(seq 1 30); do
+            grep -q 'trycloudflare.com' cloudflared.log && break
+            sleep 1
+          done
+          URL=$(grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' cloudflared.log | head -1)
+          if [ -z "$URL" ]; then
+            echo "Tunnel gagal, log:"; cat cloudflared.log; exit 1
+          fi
+          echo "DOH_URL=$URL" >> $GITHUB_ENV
+          {
+            echo "## 🎉 DoH Endpoint"
+            echo ""
+            echo "\`$URL/dns-query\`"
+          } >> $GITHUB_STEP_SUMMARY
+
+      - name: Smoke test
+        run: |
+          sleep 3
+          Q=$(python3 -c "import base64;print(base64.urlsafe_b64encode(b'\x12\x34\x01\x00\x00\x01\x00\x00\x00\x00\x00\x00\x03www\x03axn\x00\x00\x01\x00\x01').rstrip(b'=').decode())")
+          echo "== www.axn =="
+          curl -s -H "Accept: application/dns-message" "$DOH_URL/dns-query?dns=$Q" | xxd | head
+          Q2=$(python3 -c "import base64;print(base64.urlsafe_b64encode(b'\x12\x34\x01\x00\x00\x01\x00\x00\x00\x00\x00\x00\x05hello\x03axn\x00\x00\x10\x00\x01').rstrip(b'=').decode())")
+          echo "== hello.axn TXT =="
+          curl -s -H "Accept: application/dns-message" "$DOH_URL/dns-query?dns=$Q2" | xxd | head
+
+      - name: Keep alive
+        run: |
+          echo "DoH URL: $DOH_URL/dns-query"
+          echo "Firefox: network.trr.uri = $DOH_URL/dns-query  |  network.trr.mode = 3"
+          sleep 20000
