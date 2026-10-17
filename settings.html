@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Settings — AXION AI</title>
+<link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">AX</div>
+      <div><div class="brand-name"><span>AXION</span> AI</div><div class="brand-sub">v2.8.3 · browser-based agent</div></div>
+    </div>
+    <a class="nav-link" href="index.html"><span class="ic" data-icon="chat"></span> Chat</a>
+    <a class="nav-link active" href="settings.html"><span class="ic" data-icon="gear"></span> <span data-i18n="navSettings">Settings</span></a>
+    <a class="nav-link" href="library.html"><span class="ic" data-icon="folder"></span> <span data-i18n="navLibrary">File Library</span></a>
+    <a class="nav-link" href="features.html"><span class="ic" data-icon="sparkles"></span> Features</a>
+    <a class="nav-link" href="guide.html"><span class="ic" data-icon="book"></span> Guide</a>
+    <a class="nav-link" href="privacy.html"><span class="ic" data-icon="lock"></span> Privacy</a>
+    <div class="sidebar-footer"><a href="https://axion-neuralis.axn.cc.cd" target="_blank" rel="noopener">Docs <span class="ic" data-icon="external"></span></a><div class="privacy-badge">LOCAL-FIRST</div></div>
+  </aside>
+  <div class="main-col">
+    <div class="topbar">
+      <button class="icon-btn menu-btn" id="menuBtn" type="button"><span class="ic" data-icon="menu"></span></button>
+      <div class="topbar-title"><span class="status-dot"></span> <span data-i18n="navSettings">Settings</span></div>
+      <div class="topbar-spacer"></div>
+    </div>
+    <div class="page-scroll">
+      <div class="page-container">
+        <h1 data-i18n="navSettings">Settings</h1>
+        <p class="lead">Structured settings and conversations are stored in IndexedDB; file bytes are stored in OPFS when available. Data remains on this device except requests sent to the providers you configure.</p>
+        <form id="settingsForm">
+          <!-- Appearance -->
+          <div class="settings-section">
+            <h2><span class="ic" data-icon="sun"></span> Appearance &amp; Language</h2>
+            <div class="settings-row">
+              <label>Theme (default: Dark)</label>
+              <div class="settings-inputs">
+                <select id="themeSelect"><option value="dark">Dark</option><option value="light">Light</option></select>
+                <select id="langSelect"><option value="en">English (default)</option><option value="id">Bahasa Indonesia</option></select>
+              </div>
+            </div>
+            <div class="settings-row">
+              <label>Enter key behavior</label>
+              <select id="enterSelect" style="width:100%">
+                <option value="auto">Auto (desktop: send · mobile: newline)</option>
+                <option value="send">Enter = Send (Shift+Enter = newline)</option>
+                <option value="newline">Enter = Newline (Ctrl+Enter = send)</option>
+              </select>
+              <div class="settings-desc">On mobile phones the enter/newline key inserts a newline by default; send with the button or Ctrl+Enter.</div>
+            </div>
+          </div>
+          <!-- API Keys -->
+          <div class="settings-section">
+            <h2><span class="ic" data-icon="lock"></span> API Keys &amp; Providers</h2>
+            <div class="settings-desc" style="margin-bottom:14px;">Configure each provider on its dedicated page. Custom OpenAI-compatible providers can be added without a fixed provider limit.</div>
+            <div id="providerKeys"></div>
+            <div class="settings-row"><button type="button" class="btn btn-ghost btn-sm" id="addProviderBtn">+ Add custom API provider</button><div id="customProviderForm" class="hidden"></div></div>
+            <div class="settings-row" style="margin-top:14px;">
+              <label>Custom model ID (appended to any provider's list)</label>
+              <input type="text" id="customModel" placeholder="e.g. my-model-v1" style="width:100%">
+            </div>
+          </div>
+          <!-- General / agent -->
+          <div class="settings-section">
+            <h2><span class="ic" data-icon="bolt"></span> Agent &amp; Tools</h2>
+            <div class="settings-row">
+              <label>Max agent steps per message</label>
+              <input type="number" id="maxIterations" min="1" max="100" style="width:100px">
+              <div class="settings-desc">How many tool-use rounds (search, code, git, context) the AI may run before the final answer. Web search runs automatically in the background when needed.</div>
+            </div>
+            <div class="settings-row">
+              <label>Max Token context limit</label>
+              <input type="number" id="maxTokens" min="2048" max="2000000" step="1024" style="width:160px">
+              <div class="settings-desc">Hard budget estimate for input context. Token counts are approximate unless a provider supplies its own tokenizer.</div>
+            </div>
+            <div class="settings-row">
+              <label>Max output tokens per request (raise if answers are cut off)</label>
+              <input type="number" id="maxOutputTokens" min="1024" max="128000" step="1024" style="width:140px">
+              <div class="settings-desc">Default 16384. If the AI's answer is still truncated mid-sentence, raise this (some providers cap it lower).</div>
+            </div>
+          </div>
+          <!-- Search -->
+          <div class="settings-section">
+            <h2><span class="ic" data-icon="search"></span> AXION Search</h2>
+            <p class="settings-desc">AXION Search is the only search provider. It runs as an agent tool in the background and cannot be disabled in Settings. If a result contains only a URL, independent page-content fallbacks are attempted.</p>
+            <div class="settings-row">
+              <label>AXION Search service URL</label>
+              <input type="url" id="searchBase" placeholder="https://axion-search.axn.cc.cd" style="width:100%">
+              <div class="settings-desc">Default: https://axion-search.axn.cc.cd</div>
+            </div>
+            <div class="settings-row">
+              <button type="button" class="btn btn-ghost btn-sm" id="testSearch"><span class="ic" data-icon="play"></span> Test AXION Search</button>
+              <div class="test-results" id="testSearchResults"></div>
+            </div>
+          </div>
+          <!-- Device context -->
+          <div class="settings-section">
+            <h2><span class="ic" data-icon="bolt"></span> Device Context (runs on-device in background)</h2>
+            <div class="settings-row">
+              <label><input type="checkbox" id="allowGps" style="width:auto;margin-right:8px"> Allow GPS location so the AI knows your position</label>
+              <div class="settings-desc" id="gpsStatus">Location not granted. Time, date, timezone and screen size are always available on-device.</div>
+            </div>
+          </div>
+          <!-- Personalization -->
+          <div class="settings-section" id="personalizationSection">
+            <h2><span class="ic" data-icon="user"></span> Personalization</h2>
+            <div class="settings-row">
+              <label for="customInstructions">Custom Instructions</label>
+              <textarea id="customInstructions" rows="4" style="width:100%;resize:vertical" placeholder="Extra rules for your AI…"></textarea>
+              <div class="settings-desc">These instructions are appended to the base AXION system prompt.</div>
+            </div>
+            <div class="settings-row checkbox-row">
+              <input type="checkbox" id="autoContinue" style="width:auto">
+              <label for="autoContinue">Auto-Continue (automatically continue output near the token limit; default OFF)</label>
+            </div>
+            <div class="settings-row">
+              <button type="button" class="btn btn-ghost btn-sm" id="viewMemorySummary">View Memory Summary</button>
+              <div class="settings-desc" id="memorySummaryStatus">Conversation memory is stored locally.</div>
+              <pre id="memorySummaryText" class="memory-summary hidden"></pre>
+            </div>
+          </div>
+          <!-- Git -->
+          <div class="settings-section">
+            <h2><span class="ic" data-icon="folder"></span> Git Integration</h2>
+            <div class="settings-row">
+              <label>Your git provider</label>
+              <select id="gitProvider" style="width:100%">
+                <option value="github">GitHub</option>
+                <option value="gitlab">GitLab</option>
+                <option value="gitea">Gitea / Forgejo</option>
+                <option value="custom">Custom (self-hosted)</option>
+              </select>
+            </div>
+            <div class="settings-row">
+              <label>GitHub Username</label>
+              <input type="text" id="gitUsername" placeholder="GitHub username" autocomplete="username" style="width:100%">
+            </div>
+            <div class="settings-row">
+              <label>Base URL (for Gitea / custom / self-hosted GitLab)</label>
+              <input type="text" id="gitBaseUrl" placeholder="https://git.example.com/api/v1" style="width:100%">
+            </div>
+            <div class="settings-row">
+              <label>GitHub Personal Access Token (stored only on this device)</label>
+              <input type="password" id="gitToken" placeholder="ghp_… / glpat-…" style="width:100%">
+            </div>
+            <div class="settings-row checkbox-row">
+              <input type="checkbox" id="gitAutoRefresh" style="width:auto">
+              <label for="gitAutoRefresh">Auto Refresh repository list</label>
+            </div>
+            <div class="settings-row">
+              <label>Repository refresh interval (seconds)</label>
+              <input type="number" id="gitRefreshInterval" min="30" max="3600" step="30" style="width:140px">
+              <div class="settings-desc">Repository suggestions refresh automatically while chat is open when Auto Refresh is enabled.</div>
+            </div>
+            <div class="settings-row">
+              <label>AI access permission level</label>
+              <select id="gitPermission" style="width:100%">
+                <option value="low">Low — Read only (safest)</option>
+                <option value="medium" selected>Medium — Ask before every write action</option>
+                <option value="high">High — Elevated actions (still requires Allow approval)</option>
+              </select>
+              <div class="permission-note" id="permissionNote"></div>
+            </div>
+            <div class="settings-row">
+              <button type="button" class="btn btn-ghost btn-sm" id="testGit"><span class="ic" data-icon="play"></span> Test git connection</button>
+              <div class="settings-desc" id="gitTestResult">Save your settings first, then test.</div>
+            </div>
+          </div>
+          <!-- Knowledge base (synced repo the AI can search/read) -->
+          <div class="settings-section">
+            <h2><span class="ic" data-icon="book"></span> Knowledge Base</h2>
+            <div class="settings-row">
+              <div class="settings-desc">A synced repository of documents the AI can search and read on demand. Syncs automatically in the background; you can also trigger it manually here.</div>
+            </div>
+            <div class="settings-row">
+              <button type="button" class="btn btn-ghost btn-sm" id="syncKnowledge"><span class="ic" data-icon="download"></span> Sync knowledge repo now</button>
+              <div class="settings-desc" id="knowledgeStatus">Checking status…</div>
+            </div>
+          </div>
+          <!-- Workspace: local-only. GitHub is strictly an agent/copilot integration. -->
+          <div class="settings-section">
+            <h2><span class="ic" data-icon="folder"></span> Workspace</h2>
+            <p class="settings-desc" style="margin-bottom:16px;">Workspace files stay on this device. Structured data uses IndexedDB; file bytes use OPFS when available with an IndexedDB fallback. GitHub is never used as workspace storage.</p>
+            <div class="workspace-choice-list">
+              <div class="workspace-choice active"><div><strong>Local / Private</strong><small>Stored on this device</small></div><span class="status-dot" aria-label="Active"></span></div>
+              <div class="workspace-choice"><div><strong>Cloud / AXION Neuralis</strong><small>Remote workspace is not active</small></div><span class="coming-soon" data-i18n="comingSoon">Coming Soon</span></div>
+            </div>
+            <div class="settings-row checkbox-row">
+              <input type="checkbox" id="workspaceEnabled" style="width:auto">
+              <label for="workspaceEnabled">Enable local workspace (AI can read/write/search/run files here)</label>
+            </div>
+            <div class="settings-row checkbox-row">
+              <input type="checkbox" id="workspaceAlways" style="width:auto">
+              <label for="workspaceAlways"><strong>Always use local workspace</strong> — prefer local file operations and Actions for code tasks</label>
+            </div>
+            <div class="settings-desc">When Always Workspace is enabled, runtime instructions are included in every conversation. No remote repository is mounted, mirrored, or used as a storage location.</div>
+            <div class="settings-row">
+              <button type="button" class="btn btn-ghost btn-sm" id="reinjectScript"><span class="ic" data-icon="bolt"></span> Re-inject workspace script</button>
+              <div class="settings-desc">Shows the local workspace runtime instructions included in the AI system prompt.</div>
+            </div>
+          </div>
+          <!-- Data -->
+          <div class="settings-section">
+            <h2><span class="ic" data-icon="database"></span> Data</h2>
+            <div class="settings-row"><label>Full backup</label><div class="link-row"><button type="button" class="btn btn-ghost btn-sm" id="backupData">Export full backup ZIP</button><label class="btn btn-ghost btn-sm file-button" for="importBackup">Import backup ZIP</label><input type="file" id="importBackup" accept=".zip,application/zip" class="hidden"></div><div class="settings-desc">Backup includes settings, API keys, conversations, preferences, memory, and File Library files.</div><div id="backupStatus" class="settings-desc" aria-live="polite"></div></div>
+            <button type="button" class="btn btn-danger btn-sm" id="clearChats">Clear all conversations</button>
+          </div>
+          <!-- Support -->
+          <div class="settings-section" id="supportSection">
+            <h2><span class="ic" data-icon="heart"></span> Support</h2>
+            <p>Donate as you wish, to help the developer buy coffee ☕</p>
+            <a class="btn btn-ghost btn-sm" href="https://axion-hub.axn.cc.cd/donate" target="_blank" rel="noopener">Donate now</a>
+          </div>
+          <!-- Help / feedback -->
+          <div class="settings-section">
+            <h2><span class="ic" data-icon="book"></span> Help &amp; Feedback</h2>
+            <div class="link-row">
+              <a class="btn btn-ghost btn-sm" href="https://axion-neuralis.axn.cc.cd" target="_blank" rel="noopener"><span class="ic" data-icon="external"></span> Official documentation</a>
+              <a class="btn btn-ghost btn-sm" href="#" data-feedback="azrielspace852@gmail.com"><span class="ic" data-icon="external"></span> Feedback — azrielspace852</a>
+              <a class="btn btn-ghost btn-sm" href="#" data-feedback="axionneuralis@gmail.com"><span class="ic" data-icon="external"></span> Feedback — axionneuralis</a>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn"><span class="ic" data-icon="check"></span> Save settings</button>
+            <span class="saved-note" id="savedNote">Saved</span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/config.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/state.js"></script>
+<script src="js/memory.js"></script>
+<script src="js/tasks.js"></script>
+<script src="js/system-prompt.js"></script>
+<script src="js/context.js"></script>
+<script src="js/axion-search-sdk.js"></script>
+<script src="js/search.js"></script>
+<script src="js/terminal.js"></script>
+<script src="js/canvas.js"></script>
+<script src="js/git.js"></script>
+<script src="js/workspace.js"></script>
+<script src="js/artifacts.js"></script>
+<script src="js/providers.js"></script>
+<script src="js/agents.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

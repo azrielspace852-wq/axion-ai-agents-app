@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>AXION AI — Private On-Device AI Agent</title>
+<link rel="stylesheet" href="css/main.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-dark.min.css" id="hljs-theme">
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/lib/highlight.min.js"></script>
+</head>
+<body>
+<div class="app">
+  <!-- Sidebar (hamburger on mobile) — nav + chat history live here -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-logo">AX</div>
+      <div>
+        <div class="brand-name"><span>AXION</span> AI</div>
+        <div class="brand-sub">v2.8.3 · browser-based agent</div>
+      </div>
+    </div>
+    <button class="btn btn-sm new-chat-side" id="newChatBtn" type="button"><span class="ic" data-icon="newchat"></span> <span data-i18n="newChat">New Chat</span></button>
+    <nav class="nav-group">
+      <a class="nav-link" href="index.html"><span class="ic" data-icon="chat"></span> <span data-i18n="navChat">Chat</span></a>
+      <a class="nav-link" href="settings.html"><span class="ic" data-icon="gear"></span> <span data-i18n="navSettings">Settings</span></a>
+      <a class="nav-link" href="library.html"><span class="ic" data-icon="folder"></span> <span data-i18n="navLibrary">File Library</span></a>
+      <a class="nav-link" href="features.html"><span class="ic" data-icon="sparkles"></span> Features</a>
+      <a class="nav-link" href="guide.html"><span class="ic" data-icon="book"></span> Guide</a>
+      <a class="nav-link" href="privacy.html"><span class="ic" data-icon="lock"></span> Privacy</a>
+    </nav>
+    <div class="history-section">
+      <div class="history-label" data-i18n="navHistory">History</div>
+      <div class="history-list" id="historyList"></div>
+    </div>
+    <div class="sidebar-footer">
+      <button class="link-btn" id="exportChatBtn" type="button"><span class="ic" data-icon="download"></span> Export chat (.md)</button>
+      <div><a href="https://axion-neuralis.axn.cc.cd" target="_blank" rel="noopener">Docs <span class="ic" data-icon="external"></span></a></div>
+      <div class="privacy-badge">LOCAL-FIRST</div>
+    </div>
+  </aside>
+  <!-- Main column -->
+  <div class="main-col">
+    <div class="topbar">
+      <button class="icon-btn menu-btn" id="menuBtn" type="button" title="Menu"><span class="ic" data-icon="menu"></span></button>
+      <!-- New chat appears ONLY after a conversation has started (v2.6) -->
+      <button class="icon-btn hidden" id="newChatBtnTop" type="button" title="New chat"><span class="ic" data-icon="newchat"></span></button>
+      <div class="topbar-title"><span id="tempBadge" class="temp-badge hidden">Temporary</span></div>
+      <div class="topbar-spacer"></div>
+      <button class="icon-btn hidden" id="workspaceBtn" type="button" title="Workspace (Local / Private)"><span class="ic" data-icon="folder"></span></button>
+      <button class="icon-btn temp-btn" id="tempChatBtn" type="button" title="Temporary chat (not saved)" aria-pressed="false"><span class="ic" data-icon="ghost"></span></button>
+    </div>
+    <div class="chat-area">
+      <div class="chat-column" style="flex:1;display:flex;flex-direction:column;min-width:0;">
+        <div class="chat" id="chat"></div>
+        <div class="input-zone">
+          <div class="quick-scroll-controls" id="quickScrollControls"><button type="button" class="quick-scroll-btn hidden" id="scrollToTop" title="Scroll to top" aria-label="Scroll to top">↑</button><button type="button" class="quick-scroll-btn hidden" id="scrollToBottom" title="Scroll to bottom" aria-label="Scroll to bottom">↓</button></div>
+          <div class="file-preview" id="filePreview"></div>
+          <div class="token-counter" id="tokenCounter" aria-live="polite">0 / 32768 tokens (estimated)</div>
+          <div class="composer">
+            <div id="gitRepoSuggest" class="git-repo-suggest hidden" role="listbox" aria-label="GitHub repositories"></div>
+            <textarea id="input" placeholder="Chat dengan AXION…" rows="1"></textarea>
+            <div class="composer-bar">
+              <button class="icon-circle" id="attachBtn" type="button" title="Attach file" aria-label="Attach file"><span class="ic" data-icon="plus"></span></button>
+              <input type="file" id="fileInput" multiple class="hidden" />
+              <button class="model-pill" id="modelPill" type="button">
+                <span class="model-dot"></span>
+                <span id="modelPillLabel">Model</span>
+                <span class="ic" data-icon="chevron"></span>
+              </button>
+              <div class="model-popover hidden" id="modelPopover">
+                <div class="mp-row"><label data-i18n="provider">Provider</label><select id="providerSelect" title="Provider"></select></div>
+                <div class="mp-row"><label data-i18n="model">Model</label><select id="modelSelect" title="Model"></select></div>
+                <div class="mp-row"><label data-i18n="thinkingLevel">Thinking</label><div class="thinking-levels" id="thinkingLevels"></div></div>
+              </div>
+              <div class="composer-spacer"></div>
+              <button class="send-circle" id="sendBtn" type="button" title="Send"><span class="ic" data-icon="send"></span></button>
+              <button class="stop-circle hidden" id="stopBtn" type="button" title="Stop"><span class="ic" data-icon="stop"></span></button>
+            </div>
+          </div>
+          <div class="enter-hint" id="enterHint"></div>
+        </div>
+      </div>
+      <!-- Artifact preview panel -->
+      <div class="artifact-panel" id="artifactPanel">
+        <div class="artifact-header">
+          <span class="name" id="artifactName">artifact</span>
+          <button class="btn btn-sm btn-primary" id="artifactDownload" type="button" data-i18n="download">Download</button>
+          <button class="btn btn-sm btn-ghost" id="artifactClose" type="button"><span class="ic" data-icon="close"></span></button>
+        </div>
+        <div class="artifact-body" id="artifactBody"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="js/icons.js"></script>
+<script src="js/config.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/state.js"></script>
+<script src="js/memory.js"></script>
+<script src="js/tasks.js"></script>
+<script src="js/system-prompt.js"></script>
+<script src="js/context.js"></script>
+<script src="js/axion-search-sdk.js"></script>
+<script src="js/search.js"></script>
+<script src="js/terminal.js"></script>
+<script src="js/canvas.js"></script>
+<script src="js/git.js"></script>
+<script src="js/workspace.js"></script>
+<script src="js/artifacts.js"></script>
+<script src="js/providers.js"></script>
+<script src="js/library.js"></script>
+<script src="js/agents.js"></script>
+<script src="js/chat.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

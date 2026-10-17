@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Features — AXION AI</title>
+<link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="brand-logo">AX</div><div><div class="brand-name"><span>AXION</span> AI</div><div class="brand-sub">v2.8.3 · browser-based agent</div></div></div>
+    <a class="nav-link" href="index.html"><span class="ic" data-icon="chat"></span> Chat</a>
+    <a class="nav-link" href="settings.html"><span class="ic" data-icon="gear"></span> Settings</a>
+      <a class="nav-link" href="library.html"><span class="ic" data-icon="folder"></span> <span data-i18n="navLibrary">File Library</span></a>
+    <a class="nav-link" href="features.html"><span class="ic" data-icon="sparkles"></span> <span data-i18n="navFeatures">Features</span></a>
+    <a class="nav-link" href="guide.html"><span class="ic" data-icon="book"></span> Guide</a>
+    <a class="nav-link" href="privacy.html"><span class="ic" data-icon="lock"></span> Privacy</a>
+    <div class="sidebar-footer"><a href="https://axion-neuralis.axn.cc.cd" target="_blank" rel="noopener">Docs <span class="ic" data-icon="external"></span></a><div class="privacy-badge">BROWSER-BASED</div></div>
+  </aside>
+  <div class="main-col">
+    <div class="topbar">
+      <button class="icon-btn menu-btn" id="menuBtn" type="button"><span class="ic" data-icon="menu"></span></button>
+      <div class="topbar-title"><span class="status-dot"></span> <span data-i18n="navFeatures">Features</span></div>
+    </div>
+    <div class="page-scroll"><div class="page-container prose">
+      <h1 data-i18n="navFeatures">Features</h1>
+      <p class="lead">AXION AI v2.8.3 is a browser-based AI agent. Structured state is persisted in IndexedDB; file bytes use OPFS when available, with an IndexedDB fallback. Requests still go to the selected AI provider and AXION Search when those features are used.</p>
+      <div class="feature-grid">
+        <div class="feature-card"><h3>Multi-provider chat</h3><p>Connect OpenAI, Anthropic, Google, Groq, xAI, and custom OpenAI-compatible endpoints. Add custom providers without a fixed provider-count limit and configure each provider on its own settings page.</p></div>
+        <div class="feature-card"><h3>AXION Search</h3><p>AXION Search is the sole integrated search provider through the official JavaScript SDK. Search runs as a background agent tool; URL-only results trigger independent page-content extraction fallbacks when accessible.</p></div>
+        <div class="feature-card"><h3>Live execution steps</h3><p>Search, page fetch, tools, and generation status are shown in a collapsible “Step by step” section. Status updates are emitted while work is running.</p></div>
+        <div class="feature-card"><h3>Private file workspace</h3><p>An internal-only terminal creates, reads, edits, moves, and deletes files and folders; it supports navigation and ZIP creation/extraction. Generated files remain in File Library until explicitly shared or delivered.</p></div>
+        <div class="feature-card"><h3>File Library</h3><p>Upload, preview, download, extract, share, and delete files. ZIP uploads are unpacked locally while preserving relative paths. Duplicate uploads are detected and attachments can be selected from the Library or the device.</p></div>
+        <div class="feature-card"><h3>Canvas</h3><p>Use the <code>/canvas</code> command to show long text or code in a dedicated inline Canvas. The preview begins with exactly 15 lines, with Copy and View All controls.</p></div>
+        <div class="feature-card"><h3>Revisions and attachments</h3><p>Edit loads the user message back into the composer, including its attachments. User and assistant messages show revision navigation and a current/total counter where revisions exist.</p></div>
+        <div class="feature-card"><h3>Memory and tasks</h3><p>Conversation summaries and persistent task metadata are stored in IndexedDB. Memory summaries can be inspected from Settings → Personalization → Memory Summary.</p></div>
+        <div class="feature-card"><h3>Token controls</h3><p>Configure a Max Token context budget and output-token cap. Token estimates are character-based approximations unless a provider tokenizer is available. Auto-Continue is off by default.</p></div>
+        <div class="feature-card"><h3>Backup and restore</h3><p>Export settings, API-related local state, conversations, tasks, memory, preferences, and File Library blobs into one ZIP. Restore from a compatible AXION backup ZIP.</p></div>
+        <div class="feature-card"><h3>Personalization and UI</h3><p>Settings are grouped by category. Theme changes apply immediately and persist. The interface supports English and Bahasa Indonesia, custom instructions, and a first-message welcome dismissal.</p></div>
+        <div class="feature-card"><h3>Git and knowledge tools</h3><p>GitHub/GitLab/Gitea integration uses configured credentials and permission levels. An optional knowledge repository can be synchronized and searched as context.</p></div>
+      </div>
+      <h2>Storage and network notes</h2>
+      <p>IndexedDB stores structured state and metadata; OPFS stores file contents when the browser supports it. File bytes may fall back to IndexedDB Blob storage. Chat content is sent to the chosen AI provider. Search queries go to AXION Search, and URL-content fallback may use the configured public extraction endpoints described in <a href="privacy.html">Privacy</a>.</p>
+      <h2>Support</h2>
+      <p>Open Settings → Support to visit <a href="https://axion-hub.axn.cc.cd/donate" target="_blank" rel="noopener">AXION Hub Donations</a>.</p>
+    </div></div>
+  </div>
+</div>
+<script src="js/icons.js"></script>
+<script src="js/config.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/state.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

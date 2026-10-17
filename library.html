@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>File Library — AXION AI</title><link rel="stylesheet" href="css/main.css"></head>
+<body><div class="app">
+  <aside class="sidebar" id="sidebar"><div class="brand"><div class="brand-logo">AX</div><div><div class="brand-name"><span>AXION</span> AI</div><div class="brand-sub">v2.8.3 · browser-based agent</div></div></div>
+    <nav class="nav-group"><a class="nav-link" href="index.html"><span class="ic" data-icon="chat"></span> <span data-i18n="navChat">Chat</span></a><a class="nav-link" href="settings.html"><span class="ic" data-icon="gear"></span> <span data-i18n="navSettings">Settings</span></a><a class="nav-link active" href="library.html"><span class="ic" data-icon="folder"></span> <span data-i18n="navLibrary">File Library</span></a><a class="nav-link" href="features.html"><span class="ic" data-icon="sparkles"></span> <span data-i18n="navFeatures">Features</span></a><a class="nav-link" href="guide.html"><span class="ic" data-icon="book"></span> <span data-i18n="navGuide">Guide</span></a><a class="nav-link" href="privacy.html"><span class="ic" data-icon="lock"></span> <span data-i18n="navPrivacy">Privacy</span></a></nav>
+    <div class="sidebar-footer"><div class="privacy-badge">PRIVATE · LOCAL-FIRST</div></div>
+  </aside>
+  <div class="main-col"><div class="topbar"><button class="icon-btn menu-btn" id="menuBtn" type="button" title="Menu"><span class="ic" data-icon="menu"></span></button><div class="topbar-title" data-i18n="navLibrary">File Library</div><div class="topbar-spacer"></div><label class="btn btn-primary btn-sm file-button" for="libraryUpload">+ Upload files</label><input id="libraryUpload" type="file" multiple class="hidden"></div>
+    <div class="page-scroll"><div class="page-container"><h1 data-i18n="navLibrary">File Library</h1><p class="lead">Files uploaded by you and files created privately by AXION. Generated files stay here until explicitly shared to chat. File bytes use OPFS when supported; metadata uses IndexedDB.</p>
+      <div class="library-toolbar"><input type="search" id="libraryFilter" placeholder="Search files by name" aria-label="Search files"><select id="libraryTypeFilter"><option value="all">All file types</option><option value="zip">ZIP archives</option><option value="text">Text/code</option><option value="media">Images/audio/video</option></select><button type="button" id="refreshLibrary" class="btn btn-ghost btn-sm">Refresh</button></div>
+      <div id="libraryStatus" class="settings-desc" role="status"></div><div id="libraryEmpty" class="empty-library hidden"><h2>Library is empty</h2><p>Upload files here or ask AXION to create files in its internal workspace.</p></div><div id="libraryGrid" class="library-grid"></div>
+    </div></div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<script src="js/icons.js"></script><script src="js/config.js"></script><script src="js/storage.js"></script><script src="js/i18n.js"></script><script src="js/state.js"></script><script src="js/memory.js"></script>
+<script src="js/tasks.js"></script>
+<script src="js/system-prompt.js"></script><script src="js/context.js"></script><script src="js/axion-search-sdk.js"></script><script src="js/search.js"></script><script src="js/terminal.js"></script>
+<script src="js/canvas.js"></script><script src="js/git.js"></script><script src="js/workspace.js"></script><script src="js/artifacts.js"></script><script src="js/providers.js"></script><script src="js/agents.js"></script><script src="js/library.js"></script><script src="js/app.js"></script>
+</body></html>

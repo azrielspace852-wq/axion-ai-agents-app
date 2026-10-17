@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Privacy Policy — AXION AI</title>
+<link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="brand-logo">AX</div><div><div class="brand-name"><span>AXION</span> AI</div><div class="brand-sub">v2.8.3 · browser-based agent</div></div></div>
+    <a class="nav-link" href="index.html"><span class="ic" data-icon="chat"></span> Chat</a>
+    <a class="nav-link" href="settings.html"><span class="ic" data-icon="gear"></span> Settings</a>
+      <a class="nav-link" href="library.html"><span class="ic" data-icon="folder"></span> <span data-i18n="navLibrary">File Library</span></a>
+    <a class="nav-link" href="features.html"><span class="ic" data-icon="sparkles"></span> Features</a>
+    <a class="nav-link" href="guide.html"><span class="ic" data-icon="book"></span> Guide</a>
+    <a class="nav-link" href="privacy.html"><span class="ic" data-icon="lock"></span> <span data-i18n="navPrivacy">Privacy</span></a>
+    <div class="sidebar-footer"><a href="https://axion-neuralis.axn.cc.cd" target="_blank" rel="noopener">Docs <span class="ic" data-icon="external"></span></a><div class="privacy-badge">LOCAL-FIRST</div></div>
+  </aside>
+  <div class="main-col">
+    <div class="topbar">
+      <button class="icon-btn menu-btn" id="menuBtn" type="button"><span class="ic" data-icon="menu"></span></button>
+      <div class="topbar-title"><span class="status-dot"></span> <span data-i18n="navPrivacy">Privacy</span></div>
+    </div>
+    <div class="page-scroll"><div class="page-container prose">
+      <h1 data-i18n="navPrivacy">Privacy</h1>
+      <p class="lead"><strong>AXION AI stores application data locally where possible, but it is not offline-only.</strong> Features that use an AI provider, AXION Search, Git hosting, or page-content fallbacks make network requests to those services. This page identifies the principal data flows.</p>
+      <h2>Stored on this device</h2>
+      <ul>
+        <li><strong>Structured application state:</strong> settings, conversation history, API provider configuration, memory summaries, task metadata, and File Library metadata are stored in IndexedDB. A small <code>localStorage</code> compatibility cache remains for older synchronous code paths.</li>
+        <li><strong>Files and binary data:</strong> OPFS is used when available; file data falls back to Blob records in IndexedDB when OPFS is unavailable.</li>
+        <li><strong>Memory and tasks:</strong> locally generated conversation summaries and task lists persist in IndexedDB.</li>
+      </ul>
+      <p>Use Settings → Data to export a full backup ZIP or restore a previous AXION backup. Clearing browser/site data may remove local content; export a backup first if you need to keep it.</p>
+      <h2>Data sent to external services</h2>
+      <ul>
+        <li><strong>AI messages:</strong> messages, selected context, and any attachment content needed for an answer are sent from the browser to the AI provider you selected. The provider's own terms and privacy policy apply.</li>
+        <li><strong>Web search:</strong> search queries are sent to AXION Search at the configured service URL (default <code>https://axion-search.axn.cc.cd</code>). AXION Search is the app's sole integrated search provider.</li>
+        <li><strong>Page extraction fallback:</strong> if search returns only URLs, the app may request page content from Jina Reader and/or public CORS extraction services as fallback. Those services can receive the page URL and network request metadata; page access may fail or be limited.</li>
+        <li><strong>Git and knowledge sync:</strong> repository requests go to the configured GitHub/GitLab/Gitea or other git host. A configured knowledge repository may be downloaded from its hosting service.</li>
+        <li><strong>GPS:</strong> location access is permission-gated. If location context is included in a prompt, it is sent to the selected AI provider with that request.</li>
+      </ul>
+      <h2>File privacy</h2>
+      <p>Files uploaded to the File Library and files created in the internal workspace stay in local browser storage until used in a chat, explicitly shared, or otherwise sent by a user-requested action. Attaching a file to a message and sending that message shares its content with the selected AI provider. The local app does not provide server-side encryption for local database entries.</p>
+      <h2>Security notes</h2>
+      <ul>
+        <li>API keys are stored locally in browser-managed storage and are not encrypted by this app. Use scoped keys and do not use a shared/untrusted device.</li>
+        <li>Browser storage can be removed by clearing site data, private browsing policies, quota pressure, or browser-specific behavior. Keep backups for important files.</li>
+        <li>Git write permissions are controlled by the configured permission level. Review confirmation prompts and use the least privilege needed.</li>
+        <li>Network requests to AI, search, Git, and extraction providers are governed by each service's policies; AXION AI cannot guarantee their retention or handling practices.</li>
+      </ul>
+      <h2>Contact</h2>
+      <p>Questions about privacy? Email <code>azrielspace852@gmail.com</code> or <code>axionneuralis@gmail.com</code>.</p>
+      <p><em>Last updated: October 18, 2026 · AXION AI v2.8.3</em></p>
+    </div></div>
+  </div>
+</div>
+<script src="js/icons.js"></script>
+<script src="js/config.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/state.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

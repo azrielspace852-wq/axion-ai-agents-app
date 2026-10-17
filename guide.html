@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Guide — AXION AI</title>
+<link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><div class="brand-logo">AX</div><div><div class="brand-name"><span>AXION</span> AI</div><div class="brand-sub">v2.8.3 · browser-based agent</div></div></div>
+    <a class="nav-link" href="index.html"><span class="ic" data-icon="chat"></span> Chat</a>
+    <a class="nav-link" href="settings.html"><span class="ic" data-icon="gear"></span> Settings</a>
+      <a class="nav-link" href="library.html"><span class="ic" data-icon="folder"></span> <span data-i18n="navLibrary">File Library</span></a>
+    <a class="nav-link" href="features.html"><span class="ic" data-icon="sparkles"></span> Features</a>
+    <a class="nav-link" href="guide.html"><span class="ic" data-icon="book"></span> <span data-i18n="navGuide">Guide</span></a>
+    <a class="nav-link" href="privacy.html"><span class="ic" data-icon="lock"></span> Privacy</a>
+    <div class="sidebar-footer"><a href="https://axion-neuralis.axn.cc.cd" target="_blank" rel="noopener">Docs <span class="ic" data-icon="external"></span></a><div class="privacy-badge">LOCAL-FIRST</div></div>
+  </aside>
+  <div class="main-col">
+    <div class="topbar">
+      <button class="icon-btn menu-btn" id="menuBtn" type="button"><span class="ic" data-icon="menu"></span></button>
+      <div class="topbar-title"><span class="status-dot"></span> <span data-i18n="navGuide">Guide</span></div>
+    </div>
+    <div class="page-scroll"><div class="page-container prose">
+      <h1>Quick Start Guide</h1>
+      <p class="lead">Get AXION AI running in under a minute.</p>
+
+      <h2>1. Add an API key</h2>
+      <p>Open <strong>Settings</strong>, find your provider (OpenAI, Anthropic, Google, Groq, xAI Grok, or a custom OpenAI-compatible endpoint), and paste your API key. Save. The key is stored locally by this app, but is transmitted to the matching provider when authenticated requests are made.</p>
+
+      <h2>2. Pick a provider &amp; model</h2>
+      <p>In the Chat topbar, select a provider. The model dropdown filters to that provider's models and, if a key is present, auto-fetches the latest live list. You can also add a custom model ID in Settings.</p>
+
+      <h2>3. Chat</h2>
+      <p>Type a message and press <strong>Send</strong> (or Enter on desktop). On mobile, Enter inserts a newline — use the Send button or <strong>Ctrl+Enter</strong>. Use the + attachment button to choose files from File Library or your device. ZIP archives are extracted locally with their folder paths preserved.</p>
+
+      <h2>4. Watch the agent work</h2>
+      <p>When the AI needs tools (AXION Search, page extraction, internal file operations, git, device context, or knowledge base), actions appear in the collapsible “Step by step” section with progress updates.</p>
+      <p><strong>Gestures:</strong> long-press any message for <em>Copy all</em> / <em>Select text</em>; swipe from the left screen edge to open the sidebar; tap 👻 in the chat top bar for a temporary chat that is never saved.</p>
+
+      <h2>5. File Library and generated files</h2>
+      <p>Files uploaded by you and files created privately by AXION appear in <strong>File Library</strong>. The internal terminal creates individual files and folders before packaging projects as ZIP archives. Files remain private until explicitly shared or sent in chat. In Library you can preview, download, extract ZIP files, share, or delete files.</p>
+      <h2>6. Canvas and revisions</h2>
+      <p>Enter <code>/canvas</code> followed by a newline and content to create an inline Canvas preview (15 lines initially, with Copy and View All). Edit a user message to load its text and saved attachments into the composer. Use the revision controls under messages to switch among available versions.</p>
+
+      <h2>7. Enable device context (optional)</h2>
+      <p>In Settings, toggle GPS permission so the AI knows your location. Time, date, timezone, weekday, and screen size are always available on-device and are injected into the AI's context automatically.</p>
+
+      <h2>8. Sync the knowledge base (optional)</h2>
+      <p>In Settings → Git, click <strong>Sync knowledge repo</strong> to download and index <code>azrielspace852-wq/knowladge</code>. The AI can then search and read those files as extra knowledge.</p>
+
+      <h2>9. Connect your git (optional)</h2>
+      <p>Add your GitHub/GitLab/Gitea username and Personal Access Token. Choose a permission level:</p>
+      <ul>
+        <li><strong>Low</strong> — AI can only read repositories (safest).</li>
+        <li><strong>Medium</strong> — AI asks your confirmation before every write/create action.</li>
+        <li><strong>High</strong> — AI acts autonomously. <em>Not recommended — high risk.</em></li>
+      </ul>
+
+      <h2>10. Token budget and backup</h2>
+      <p>Settings → Personalization has Max Token and Auto-Continue (OFF by default). Token counts are estimates where no exact tokenizer is available. Settings → Data exports or restores a ZIP backup of settings, conversations, memory, tasks, and File Library files. Backups may contain API keys and private data.</p>
+
+      <h2>Keyboard shortcuts</h2>
+      <ul>
+        <li><code>Enter</code> — send (desktop) / newline (mobile)</li>
+        <li><code>Shift+Enter</code> — newline, always</li>
+        <li><code>Ctrl/Cmd+Enter</code> — send, always</li>
+      </ul>
+
+      <h2>Need help?</h2>
+      <p>Check the <a href="https://axion-neuralis.axn.cc.cd" target="_blank" rel="noopener">official documentation</a> or email feedback to <code>azrielspace852@gmail.com</code> / <code>axionneuralis@gmail.com</code>.</p>
+    </div></div>
+  </div>
+</div>
+<script src="js/icons.js"></script>
+<script src="js/config.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/state.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
