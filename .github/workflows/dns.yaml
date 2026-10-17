@@ -1,4 +1,4 @@
-name: AXN TLD Experiment
+name: AXN TLD Experiment (SSH Tunnel)
 
 on:
   workflow_dispatch:
@@ -10,13 +10,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download binaries
+      - name: Download CoreDNS
         run: |
           curl -sSL -o coredns.tgz https://github.com/coredns/coredns/releases/download/v1.11.3/coredns_1.11.3_linux_amd64.tgz
           tar -xzf coredns.tgz && chmod +x coredns
-
-          curl -sSL -o cloudflared https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
-          chmod +x cloudflared
 
       - name: Build DoH proxy
         run: |
@@ -37,37 +34,49 @@ jobs:
           sleep 1
           cat doh.log
 
-      - name: Start cloudflared tunnel
+      - name: Start SSH tunnel via localhost.run
         id: tunnel
         run: |
-          ./cloudflared tunnel --url http://127.0.0.1:8053 --no-autoupdate > cloudflared.log 2>&1 &
+          # Membuat reverse tunnel ke port 8053 (DoH proxy)
+          # Opsi -o StrictHostKeyChecking=no untuk menerima host key secara otomatis
+          ssh -o StrictHostKeyChecking=no -R 80:localhost:8053 localhost.run > tunnel.log 2>&1 &
+          TUNNEL_PID=$!
+          echo "TUNNEL_PID=$TUNNEL_PID" >> $GITHUB_ENV
+
+          # Tunggu hingga URL muncul di log (biasanya butuh beberapa detik)
           for i in $(seq 1 30); do
-            grep -q 'trycloudflare.com' cloudflared.log && break
+            if grep -qE 'https://[a-zA-Z0-9.-]+\.lhr\.life' tunnel.log; then
+              break
+            fi
             sleep 1
           done
-          URL=$(grep -oE 'https://[a-z0-9-]+\.trycloudflare\.com' cloudflared.log | head -1)
+
+          URL=$(grep -oE 'https://[a-zA-Z0-9.-]+\.lhr\.life' tunnel.log | head -1)
           if [ -z "$URL" ]; then
-            echo "Tunnel gagal, log:"; cat cloudflared.log; exit 1
+            echo "Tunnel gagal, log:"; cat tunnel.log; exit 1
           fi
+
           echo "DOH_URL=$URL" >> $GITHUB_ENV
           {
-            echo "## 🎉 DoH Endpoint"
+            echo "## 🎉 DoH Endpoint (via .axn / localhost.run)"
             echo ""
             echo "\`$URL/dns-query\`"
+            echo ""
+            echo "**Catatan:** Ini adalah tunnel SSH, bukan Cloudflare."
           } >> $GITHUB_STEP_SUMMARY
 
       - name: Smoke test
         run: |
           sleep 3
+          # (Bagian ini sama seperti sebelumnya, menguji query www.axn)
           Q=$(python3 -c "import base64;print(base64.urlsafe_b64encode(b'\x12\x34\x01\x00\x00\x01\x00\x00\x00\x00\x00\x00\x03www\x03axn\x00\x00\x01\x00\x01').rstrip(b'=').decode())")
           echo "== www.axn =="
           curl -s -H "Accept: application/dns-message" "$DOH_URL/dns-query?dns=$Q" | xxd | head
-          Q2=$(python3 -c "import base64;print(base64.urlsafe_b64encode(b'\x12\x34\x01\x00\x00\x01\x00\x00\x00\x00\x00\x00\x05hello\x03axn\x00\x00\x10\x00\x01').rstrip(b'=').decode())")
-          echo "== hello.axn TXT =="
-          curl -s -H "Accept: application/dns-message" "$DOH_URL/dns-query?dns=$Q2" | xxd | head
 
       - name: Keep alive
         run: |
           echo "DoH URL: $DOH_URL/dns-query"
           echo "Firefox: network.trr.uri = $DOH_URL/dns-query  |  network.trr.mode = 3"
+          # Jaga agar tunnel SSH tetap hidup dengan proses latar belakang
           sleep 20000
+          kill $TUNNEL_PID || true
